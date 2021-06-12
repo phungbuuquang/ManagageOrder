@@ -1,12 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+import 'package:pedantic/pedantic.dart';
+import 'package:universal_platform/universal_platform.dart';
 
+import 'components/depency_injection/di.dart';
 import 'features/app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runZonedGuarded(() async {
+    await DependencyInjection.inject();
+    if (UniversalPlatform.isIOS || UniversalPlatform.isAndroid) {
+      unawaited(FlutterStatusbarcolor.setStatusBarWhiteForeground(true));
+      unawaited(FlutterStatusbarcolor.setStatusBarColor(Colors.transparent));
+      unawaited(SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp]));
+    }
     runApp(const Application());
   }, (e, stack) {
     // LogUtils.d(stack);

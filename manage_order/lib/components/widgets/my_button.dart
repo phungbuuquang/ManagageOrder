@@ -4,12 +4,13 @@ import 'package:manage_order/styles/theme.dart';
 class MyButton extends StatelessWidget {
   final double height;
   final String title;
+  final bool isLoading;
   final Function()? onPressed;
-  MyButton({
-    this.height = 50,
-    required this.title,
-    this.onPressed,
-  });
+  MyButton(
+      {this.height = 50,
+      required this.title,
+      this.onPressed,
+      this.isLoading = false});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -25,10 +26,14 @@ class MyButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
-          child: Text(
-            title,
-            style: AppTextTheme.getTextTheme.bodyText2,
-          ),
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  strokeWidth: 2,
+                )
+              : Text(
+                  title,
+                  style: AppTextTheme.getTextTheme.bodyText2,
+                ),
         ),
       ),
     );

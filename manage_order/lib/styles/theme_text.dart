@@ -4,6 +4,12 @@ class AppTextTheme {
   static const String titleFont = 'Comfortaa';
   static const String bodyFont = 'Noto Sans';
   static TextTheme get getTextTheme => const TextTheme(
+        headline1: TextStyle(
+          fontSize: 15,
+          fontStyle: FontStyle.normal,
+          // fontWeight: FontWeight.w700,
+          color: Colors.grey,
+        ),
         bodyText1: TextStyle(
           fontSize: 16,
           fontStyle: FontStyle.normal,
@@ -15,6 +21,18 @@ class AppTextTheme {
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w600,
           color: Colors.white,
+        ),
+        subtitle1: TextStyle(
+          fontSize: 14,
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        subtitle2: TextStyle(
+          fontSize: 14,
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
         ),
       );
 

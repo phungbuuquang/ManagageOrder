@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manage_order/components/depency_injection/di.dart';
+import 'package:manage_order/services/prefs/app_preferences.dart';
 import '../styles/theme.dart';
 import 'routes.dart';
 
@@ -11,7 +13,9 @@ class Application extends StatelessWidget {
   const Application({Key? key}) : super(key: key);
 
   String get initialRoute {
-    return RouteList.login;
+    return injector.get<AppPreferences>().getIdUser() != null
+        ? RouteList.home
+        : RouteList.login;
   }
 
   List<BlocProvider> get _getProviders => [

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MyCheckbox extends StatefulWidget {
+  final Function(bool?)? onChanged;
+  final bool value;
+  MyCheckbox({
+    this.onChanged,
+    required this.value,
+  });
   @override
   _MyCheckboxState createState() => _MyCheckboxState();
 }
@@ -11,8 +17,12 @@ class _MyCheckboxState extends State<MyCheckbox> {
     return Checkbox(
       checkColor: Colors.white,
       activeColor: Theme.of(context).primaryColor,
-      value: false,
-      onChanged: (value) {},
+      value: widget.value,
+      onChanged: (val) {
+        if (widget.onChanged != null) {
+          widget.onChanged!(val);
+        }
+      },
     );
   }
 }
