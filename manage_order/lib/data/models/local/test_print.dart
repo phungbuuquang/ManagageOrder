@@ -1,10 +1,90 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:intl/intl.dart';
 import 'package:manage_order/data/models/local/order_request.dart';
+import 'package:manage_order/data/models/remote/detail_order_data.dart';
+import 'package:manage_order/data/models/remote/order_response.dart';
 
 class TestPrint {
-  BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
+  BlueThermalPrinter bluetooth;
+  TestPrint(this.bluetooth);
+  String getDateNow() {
+    final now = DateTime.now();
+    final formatter = DateFormat('HH:mm dd-MM-yyyy');
+    final formatted = formatter.format(now);
+    return formatted;
+  }
 
-  sample(OrderRequest data) async {
+  printListQRCode(List<DetailOrderData> listOrder) async {
+    await bluetooth.isConnected.then((isConnected) {
+      if (isConnected == true) {
+        bluetooth.printNewLine();
+        listOrder.forEach((e) {
+          for (var i = 0; i < (int.parse(e.soLuong ?? '0')); i++) {
+            bluetooth.printCustom(e.tenHang ?? '', 1, 1);
+            bluetooth.printQRcode(e.maGoiHang ?? '', 250, 250, 1);
+            bluetooth.printNewLine();
+          }
+        });
+        bluetooth.paperCut();
+      }
+    });
+  }
+
+  printBill(
+    OrderRequest data,
+    String qrCode,
+  ) async {
+    await bluetooth.isConnected.then(
+      (isConnected) {
+        if (isConnected == true) {
+          bluetooth.printNewLine();
+          bluetooth.printCustom('GIẤY BÁO HÀNG', 1, 1);
+          bluetooth.printQRcode(qrCode, 250, 250, 1);
+          bluetooth.printNewLine();
+          bluetooth.printNewLine();
+          bluetooth.paperCut();
+          // bluetooth.printCustom('GIẤY BÁO HÀNG', 4, 1);
+          // bluetooth.printCustom('DATE: ${getDateNow()}', 0, 1);
+          // bluetooth.printNewLine();
+          // bluetooth.printCustom('XE: ${data.fee?.tenPhi ?? ''}', 2, 0);
+          // bluetooth.printCustom('Số lượng: ${data.soLuongXe ?? ''}', 2, 0);
+          // bluetooth.printCustom('Tên khách: ${data.tenKhachHang ?? ''}', 2, 0);
+          // bluetooth.printNewLine();
+          // for (var i = 0; i < data.listStock.length; i++) {
+          //   bluetooth.printCustom(
+          //     '${i + 1}. ${data.listStock[i].name ?? ' '}',
+          //     1,
+          //     0,
+          //   );
+          //   bluetooth.printCustom(
+          //     'Số lượng: ${data.listStock[i].number.toString()} ${data.listStock[i].unit?.tenDVT ?? ''}',
+          //     1,
+          //     0,
+          //   );
+          // }
+          // bluetooth.printNewLine();
+          // bluetooth.printLeftRight(
+          //     'TT: ',
+          //     '${data.warehouse != null ? ('Vào kho ${data.warehouse?.tenKho ?? ''}') : ('Lên xe ${data.truck?.bienSoXe ?? ''}')}',
+          //     1);
+          // bluetooth.printCustom('Ký tên', 2, 0);
+          // bluetooth.printNewLine();
+          // bluetooth.printNewLine();
+          // // bluetooth.printLeftRight('XE:', data.fee?.tenPhi ?? '', 1);
+          // // bluetooth.printLeftRight('KHÁCH NHẬN:', data.tenKhachHang ?? '', 0);
+          // bluetooth.printNewLine();
+          // bluetooth.printNewLine();
+          // bluetooth.paperCut();
+          return;
+        }
+      },
+    );
+  }
+
+  sample(
+    OrderRequest data,
+    String qrCode,
+  ) async {
     //SIZE
     // 0- normal size text
     // 1- only bold text
@@ -17,27 +97,36 @@ class TestPrint {
 
 //     var response = await http.get("IMAGE_URL");
 //     Uint8List bytes = response.bodyBytes;
+
     await bluetooth.isConnected.then((isConnected) {
       if (isConnected == true) {
         bluetooth.printNewLine();
-        bluetooth.printCustom('DATE:...............................', 0, 1);
+        bluetooth.printQRcode(qrCode, 200, 200, 1);
+        bluetooth.printNewLine();
         bluetooth.printCustom('GIẤY BÁO HÀNG', 4, 1);
+        bluetooth.printCustom('DATE: ${getDateNow()}', 0, 1);
         bluetooth.printNewLine();
         bluetooth.printCustom('XE: ${data.fee?.tenPhi ?? ''}', 2, 0);
         bluetooth.printCustom('Số lượng: ${data.soLuongXe ?? ''}', 2, 0);
         bluetooth.printCustom('Tên khách: ${data.tenKhachHang ?? ''}', 2, 0);
         bluetooth.printNewLine();
         for (var i = 0; i < data.listStock.length; i++) {
-          bluetooth.printCustom('${i + 1}. Hàng', 2, 0);
-          bluetooth.printLeftRight('Tên:', data.listStock[i].name ?? '', 1);
-          bluetooth.printLeftRight(
-              'Số lượng:', data.listStock[i].number.toString(), 1);
-          bluetooth.printLeftRight(
-              'Đơn vị tính:', data.listStock[i].unit?.tenDVT ?? '', 1);
+          bluetooth.printCustom(
+            '${i + 1}. ${data.listStock[i].name ?? ' '}',
+            1,
+            0,
+          );
+          bluetooth.printCustom(
+            'Số lượng: ${data.listStock[i].number.toString()} ${data.listStock[i].unit?.tenDVT ?? ''}',
+            1,
+            0,
+          );
         }
         bluetooth.printNewLine();
-        bluetooth.printCustom(
-            'TT: ${data.idKho != null ? 'Vào kho' : 'Lên xe'}', 2, 0);
+        bluetooth.printLeftRight(
+            'TT: ',
+            '${data.warehouse != null ? ('Vào kho ${data.warehouse?.tenKho ?? ''}') : ('Lên xe ${data.truck?.bienSoXe ?? ''}')}',
+            1);
         bluetooth.printCustom('Ký tên', 2, 0);
         bluetooth.printNewLine();
         bluetooth.printNewLine();

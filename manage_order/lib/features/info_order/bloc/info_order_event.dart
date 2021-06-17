@@ -1,6 +1,9 @@
 part of 'info_order_bloc.dart';
 
-abstract class InfoOrderEvent {}
+abstract class InfoOrderEvent extends Equatable {
+  @override
+  List<Object> get props => [const Uuid().v4()];
+}
 
 class SelectFeeEvent extends InfoOrderEvent {
   final FeeVehicle fee;
@@ -64,4 +67,9 @@ class ChangedListInfoStockEvent extends InfoOrderEvent {
 class AddOrderSubmitEvent extends InfoOrderEvent {
   final OrderRequest request;
   AddOrderSubmitEvent(this.request);
+}
+
+class ValidateInfoEvent extends InfoOrderEvent {
+  final OrderRequest request;
+  ValidateInfoEvent(this.request);
 }

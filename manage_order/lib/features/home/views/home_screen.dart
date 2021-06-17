@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manage_order/components/depency_injection/di.dart';
-import 'package:manage_order/services/prefs/app_preferences.dart';
 
+import '../../../components/depency_injection/di.dart';
 import '../../../data/models/local/item_menu.dart';
 import '../../../resources/assets/icons_constant.dart';
+import '../../../services/prefs/app_preferences.dart';
 import '../../../styles/theme.dart';
 import '../../routes.dart';
 
@@ -24,6 +24,16 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: IconConstants.history,
     ),
   ];
+  bool isBaoHang = true;
+  @override
+  void initState() {
+    super.initState();
+    final role = injector.get<AppPreferences>().getRoleUser();
+    if (role == TypeUser.thukho) {
+      isBaoHang = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +53,31 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: _buildListMenu(),
+          GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed(
+                isBaoHang ? RouteList.info_order : RouteList.stocker),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SvgPicture.asset(
+                      IconConstants.order,
+                      width: 50,
+                      height: 50,
+                    ),
+                    Text(
+                      isBaoHang ? 'Thêm đơn hàng' : 'Phân xe giao hàng',
+                      style: AppTextTheme.getTextTheme.bodyText1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           Container(
             width: double.infinity,
@@ -76,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 10,
                     ),
                     Text(
-                      'Kiểm hàng',
+                      isBaoHang ? 'Kiểm hàng' : 'Thủ kho',
                       style: AppTextTheme.getTextTheme.subtitle1,
                     )
                   ],

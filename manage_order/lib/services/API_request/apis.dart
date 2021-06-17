@@ -6,4 +6,5 @@ class Apis {
   static const String loadWarehouse = '/loadkho';
   static const String loadUnit = '/loaddvt';
   static const String addOrder = '/themdonhang';
+  static const String detailOrder = '/chitietdonhang';
 }

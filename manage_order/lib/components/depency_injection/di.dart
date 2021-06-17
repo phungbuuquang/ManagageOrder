@@ -3,6 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:manage_order/features/info_order/bloc/info_order_bloc.dart';
 import 'package:manage_order/features/info_order/interactor/info_order_interactor.dart';
 import 'package:manage_order/features/info_order/repository/info_order_repository.dart';
+import 'package:manage_order/features/print_bill/bloc/printer_bloc.dart';
+import 'package:manage_order/features/print_bill/interactor/printer_interactor.dart';
+import 'package:manage_order/features/print_bill/repository/printer_repository.dart';
 import 'package:manage_order/services/prefs/app_preferences.dart';
 import 'package:manage_order/services/prefs/app_preferences_imple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +53,15 @@ class DependencyInjection {
       () => InfoOrderBloc(
         interactor: InfoOrderInteractor(
           repository: InfoOrderRepository(
+            apiClient: _appApiClient,
+          ),
+        ),
+      ),
+    );
+    injector.registerFactory<PrinterBloc>(
+      () => PrinterBloc(
+        interactor: PrinterInteractor(
+          repository: PrinterRepository(
             apiClient: _appApiClient,
           ),
         ),

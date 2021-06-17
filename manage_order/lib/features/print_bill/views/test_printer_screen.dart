@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:manage_order/data/models/local/order_request.dart';
 import 'package:manage_order/data/models/local/test_print.dart';
 
 class TestPrinterScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _TestPrinterScreenState extends State<TestPrinterScreen> {
     super.initState();
     initPlatformState();
     initSavetoPath();
-    testPrint = TestPrint();
+    testPrint = TestPrint(bluetooth);
   }
 
   initSavetoPath() async {
@@ -153,7 +154,7 @@ class _TestPrinterScreenState extends State<TestPrinterScreen> {
                   child: RaisedButton(
                     color: Colors.brown,
                     onPressed: () {
-                      // testPrint?.sample('');
+                      testPrint?.sample(OrderRequest(listStock: []), '');
                     },
                     child: Text('PRINT TEST',
                         style: TextStyle(color: Colors.white)),

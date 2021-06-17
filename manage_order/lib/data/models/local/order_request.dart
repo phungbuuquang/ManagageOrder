@@ -1,20 +1,22 @@
 import 'package:manage_order/data/models/local/item_stock.dart';
 import 'package:manage_order/data/models/remote/fee_vehicle.dart';
+import 'package:manage_order/data/models/remote/truck_data.dart';
+import 'package:manage_order/data/models/remote/warehouse_data.dart';
 
 class OrderRequest {
   FeeVehicle? fee;
   int? soLuongXe;
   String? tenKhachHang;
-  int? idXelon;
-  int? idKho;
+  TruckData? truck;
+  WarehouseData? warehouse;
   List<ItemStock> listStock;
 
   OrderRequest({
     this.fee,
     this.soLuongXe,
     this.tenKhachHang,
-    this.idXelon,
-    this.idKho,
+    this.truck,
+    this.warehouse,
     required this.listStock,
   });
 

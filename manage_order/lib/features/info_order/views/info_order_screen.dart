@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:manage_order/components/widgets/common_dialog_notification.dart';
-import 'package:manage_order/data/models/local/order_request.dart';
 
 import '../../../components/base/base_statefull.dart';
+import '../../../components/widgets/common_dialog_notification.dart';
 import '../../../components/widgets/my_button.dart';
 import '../../../components/widgets/my_checkbox.dart';
 import '../../../components/widgets/my_dropdown_button.dart';
 import '../../../components/widgets/my_text_form_field.dart';
 import '../../../data/models/local/item_stock.dart';
+import '../../../data/models/local/order_request.dart';
 import '../../../data/models/remote/fee_vehicle.dart';
 import '../../../data/models/remote/truck_data.dart';
 import '../../../data/models/remote/unit_data.dart';
@@ -36,8 +36,8 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
   FeeVehicle? _fee;
   int? _numVehicle;
   String? _nameCustomer;
-  int? _idTruck;
-  int? _idWarehouse;
+  TruckData? _truck;
+  WarehouseData? _warehouse;
   OrderRequest? orderRequest;
 
   late String selectedVal;
@@ -99,58 +99,18 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                BlocListener<InfoOrderBloc, InfoOrderState>(
-                  listenWhen: (prev, current) {
-                    return current is AddOrderDoneState;
-                  },
-                  listener: (_, state) {
-                    if (state is AddOrderDoneState) {
-                      Navigator.of(context).pushNamed(RouteList.printer,
-                          arguments: {'order_request': orderRequest});
-                    }
-                  },
-                  child: MyButton(
-                    title: 'Xác nhận',
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_context) => NotificationDialog(
-                          iconImages: const Icon(Icons.warning),
-                          title: 'Thông báo',
-                          message: 'Bạn chắc chắn muốn gửi đơn hàng này',
-                          negativeButtonName: 'Hủy',
-                          nagativeButtonOnCLick: () =>
-                              Navigator.of(_context).pop(),
-                          possitiveButtonName: 'OK',
-                          possitiveButtonOnClick: () {
-                            Navigator.of(_context).pop();
-                            orderRequest = OrderRequest(
-                              fee: _fee,
-                              soLuongXe: _numVehicle,
-                              idKho: _idWarehouse,
-                              idXelon: _idTruck,
-                              tenKhachHang: _nameCustomer,
-                              listStock: listStocks,
-                            );
-                            _bloc.add(
-                              AddOrderSubmitEvent(orderRequest!),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                _buildSubmitBtn(context),
               ],
             ),
           ),
         ),
         BlocBuilder<InfoOrderBloc, InfoOrderState>(
           builder: (_, state) {
-            if (state is LoadingAddOrderState) {
+            if (state is LoadingState) {
               return const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
+                  backgroundColor: Colors.grey,
                 ),
               );
             }

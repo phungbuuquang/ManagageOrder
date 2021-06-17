@@ -1,19 +1,36 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:manage_order/data/models/local/order_request.dart';
-import 'package:manage_order/data/models/local/test_print.dart';
-import 'package:manage_order/styles/theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../components/widgets/common_dialog_notification.dart';
+import '../../../components/widgets/my_dropdown_form_field.dart';
+import '../../../data/models/local/order_request.dart';
+import '../../../data/models/local/test_print.dart';
+import '../../../data/models/remote/order_response.dart';
+import '../../../styles/theme.dart';
+import '../bloc/printer_bloc.dart';
+
+part 'printer_children.dart';
 
 class PrinterScreen extends StatefulWidget {
-  OrderRequest orderRequest;
-  PrinterScreen({required this.orderRequest});
+  final OrderRequest orderRequest;
+  final OrderResponse orderResponse;
+  PrinterScreen({
+    required this.orderRequest,
+    required this.orderResponse,
+  });
   @override
   _PrinterScreenState createState() => _PrinterScreenState();
 }
 
 class _PrinterScreenState extends State<PrinterScreen> {
   BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
+
+  PrinterBloc get _bloc => BlocProvider.of(context);
+
+  List<BluetoothDevice> listDevices = [];
 
   // BluetoothDevice? _device;
   bool _connected = false;
@@ -23,8 +40,9 @@ class _PrinterScreenState extends State<PrinterScreen> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-    testPrint = TestPrint();
+    _bloc.add(GetListDevicesEvent(bluetooth));
+
+    // initPlatformState();
   }
 
   _connect(BluetoothDevice? device) {
@@ -44,13 +62,20 @@ class _PrinterScreenState extends State<PrinterScreen> {
 
   Future<void> initPlatformState() async {
     final isConnected = await bluetooth.isConnected;
-    print(isConnected);
+    final isOn = await bluetooth.isOn;
+    print(isOn);
+
+    // if (isConnected == false) {
+    //   return;
+    // }
     var devices = <BluetoothDevice>[];
     try {
       devices = await bluetooth.getBondedDevices();
       print(devices);
       _connect(devices[0]);
-    } on PlatformException {}
+    } on PlatformException {
+      print('exception');
+    }
 
     bluetooth.onStateChanged().listen((state) {
       switch (state) {
@@ -82,83 +107,49 @@ class _PrinterScreenState extends State<PrinterScreen> {
     // }
   }
 
+  _onPrintPressed() {
+    _bloc.add(PrintPressedEvent(bluetooth));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('In giấy báo hàng'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () => testPrint?.sample(
-                widget.orderRequest,
-              ),
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                    color: Theme.of(context).primaryColor,
-                    width: 1,
-                  ),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('In giấy báo hàng'),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                printersDropdownButton(),
+                const SizedBox(
+                  height: 20,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'In biên nhận',
-                        style: AppTextTheme.getTextTheme.bodyText1,
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ],
-                  ),
+                _buildBillButton(context),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
+                _buildPrinQRButton(context)
+              ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Theme.of(context).primaryColor,
-                  width: 1,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'In mã QR',
-                      style: AppTextTheme.getTextTheme.bodyText1,
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+        BlocBuilder<PrinterBloc, PrinterState>(
+          builder: (_, state) {
+            if (state is LoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  backgroundColor: Colors.grey,
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        )
+      ],
     );
   }
 }

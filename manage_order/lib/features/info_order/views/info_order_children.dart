@@ -17,7 +17,9 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
                   onChanged: (val) {
                     if (val != null) {
                       _bloc.add(CheckTruckEvent(val));
-                      _bloc.add(GetListTrucksEvent());
+                      if (val == true) {
+                        _bloc.add(GetListTrucksEvent());
+                      }
                     }
                   },
                 );
@@ -51,7 +53,9 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
                   onChanged: (val) {
                     if (val != null) {
                       _bloc.add(CheckWarehouseEvent(val));
-                      _bloc.add(GetListWarehousesEvent());
+                      if (val == true) {
+                        _bloc.add(GetListWarehousesEvent());
+                      }
                     }
                   },
                 );
@@ -69,8 +73,92 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
     );
   }
 
+  Future _showDialogInvalid(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (_context) => NotificationDialog(
+        iconImages: const Icon(Icons.warning),
+        title: 'Thông báo',
+        message: 'Vui lòng nhập đầy đủ thông tin',
+        possitiveButtonName: 'OK',
+        possitiveButtonOnClick: () {
+          Navigator.of(_context).pop();
+        },
+      ),
+    );
+  }
+
+  Future _showDialogSubmitOrder(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (_context) => NotificationDialog(
+        iconImages: const Icon(Icons.warning),
+        title: 'Thông báo',
+        message: 'Bạn chắc chắn muốn gửi đơn hàng này',
+        negativeButtonName: 'Hủy',
+        nagativeButtonOnCLick: () => Navigator.of(_context).pop(),
+        possitiveButtonName: 'OK',
+        possitiveButtonOnClick: () {
+          Navigator.of(_context).pop();
+
+          // Navigator.of(context).pushNamed(RouteList.printer,
+          //     arguments: {'order_request': orderRequest});
+          _bloc.add(
+            AddOrderSubmitEvent(orderRequest!),
+          );
+        },
+      ),
+    );
+  }
+
+  BlocListener<InfoOrderBloc, InfoOrderState> _buildSubmitBtn(
+      BuildContext context) {
+    return BlocListener<InfoOrderBloc, InfoOrderState>(
+      listenWhen: (prev, current) {
+        return current is AddOrderDoneState ||
+            current is InvalidInfoState ||
+            current is ValidInfoState;
+      },
+      listener: (_, state) {
+        if (state is AddOrderDoneState) {
+          Navigator.of(context).pushNamed(
+            RouteList.printer,
+            arguments: {
+              'order_request': orderRequest,
+              'order_response': state.response
+            },
+          );
+        } else if (state is InvalidInfoState) {
+          _showDialogInvalid(context);
+        } else if (state is ValidInfoState) {
+          _showDialogSubmitOrder(context);
+        }
+      },
+      child: MyButton(
+        title: 'Xác nhận',
+        onPressed: () {
+          orderRequest = OrderRequest(
+            fee: _fee,
+            soLuongXe: _numVehicle,
+            warehouse: _warehouse,
+            truck: _truck,
+            tenKhachHang: _nameCustomer,
+            listStock: listStocks,
+          );
+
+          _bloc.add(ValidateInfoEvent(orderRequest!));
+        },
+      ),
+    );
+  }
+
   Widget _buildListInfoStock() {
-    return BlocBuilder<InfoOrderBloc, InfoOrderState>(
+    return BlocConsumer<InfoOrderBloc, InfoOrderState>(
+      listener: (_, state) {
+        if (state is GetListUnitsDoneState) {
+          listUnits = state.listUnits;
+        }
+      },
       buildWhen: (prev, current) {
         return current is GetListInfoStockDoneState;
       },
@@ -251,7 +339,7 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
           listTrucks = state.listTrucks;
         }
         if (state is SelectTruckState) {
-          _idTruck = state.truck?.idXe;
+          _truck = state.truck;
         }
       },
       buildWhen: (prev, current) {
@@ -290,7 +378,7 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
           listWarehouses = state.listWarehouses;
         }
         if (state is SelectWarehouseState) {
-          _idWarehouse = state.warehouse?.idKho;
+          _warehouse = state.warehouse;
         }
       },
       buildWhen: (prev, current) {
@@ -361,51 +449,37 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
     required Function(UnitData) onChanged,
     UnitData? unit,
   }) {
-    return BlocConsumer<InfoOrderBloc, InfoOrderState>(
-      buildWhen: (prev, current) {
-        return current is GetListInfoStockDoneState;
+    return InkWell(
+      onTap: () {
+        _showBottomSheetUnit(
+          context: context,
+          onChanged: onChanged,
+        );
       },
-      listener: (_, state) {
-        if (state is GetListUnitsDoneState) {
-          listUnits = state.listUnits;
-        }
-      },
-      builder: (_, state) {
-        if (state is GetListInfoStockDoneState) {
-          return InkWell(
-            onTap: () {
-              _showBottomSheetUnit(
-                context: context,
-                onChanged: onChanged,
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      unit == null ? 'Chọn đơn vị tính' : (unit.tenDVT ?? ''),
-                      style: unit == null
-                          ? AppTextTheme.getTextTheme.headline1
-                          : AppTextTheme.getTextTheme.subtitle2,
-                    ),
-                    const Icon(Icons.arrow_drop_down)
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Divider(
-                  height: 1,
-                ),
-              ],
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                unit == null ? 'Chọn đơn vị tính' : (unit.tenDVT ?? ''),
+                style: unit == null
+                    ? AppTextTheme.getTextTheme.headline1
+                    : AppTextTheme.getTextTheme.subtitle2,
+              ),
+              const Icon(Icons.arrow_drop_down)
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Divider(
+            height: 2,
+            color: Colors.grey,
+          ),
+        ],
+      ),
     );
   }
 

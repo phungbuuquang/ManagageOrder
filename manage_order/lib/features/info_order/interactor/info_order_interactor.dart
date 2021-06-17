@@ -13,6 +13,24 @@ class InfoOrderInteractor {
     required this.repository,
   });
 
+  bool validateInfoOrder(OrderRequest request) {
+    if (request.soLuongXe == null || request.tenKhachHang == null) {
+      return false;
+    }
+    final listStock = request.listStock;
+    for (var i = 0; i < listStock.length; i++) {
+      if (listStock[i].name == null ||
+          listStock[i].number == null ||
+          listStock[i].unit == null) {
+        return false;
+      }
+    }
+    if (request.truck == null && request.warehouse == null) {
+      return false;
+    }
+    return true;
+  }
+
   Future<List<FeeVehicle>?> getFeeVehicles() {
     return repository.getFeeVehicles();
   }

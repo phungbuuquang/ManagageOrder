@@ -72,4 +72,8 @@ class AddOrderDoneState extends InfoOrderState {
 
 class AddOrderFailedState extends InfoOrderState {}
 
-class LoadingAddOrderState extends InfoOrderState {}
+class LoadingState extends InfoOrderState {}
+
+class InvalidInfoState extends InfoOrderState {}
+
+class ValidInfoState extends InfoOrderState {}

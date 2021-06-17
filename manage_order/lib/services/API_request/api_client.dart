@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:manage_order/data/models/remote/detail_order_data.dart';
 import 'package:manage_order/data/models/remote/order_response.dart';
 import 'package:manage_order/data/models/remote/truck_data.dart';
 import 'package:manage_order/data/models/remote/unit_data.dart';
@@ -46,5 +47,9 @@ abstract class ApiClient {
     @Path('TenKhachHang') required String tenKhachHang,
     @Path('chuoihang') required String chuoihang,
   });
+  @GET('${Apis.detailOrder}?idDonHang={idDonHang}')
+  Future<List<DetailOrderData>?> getListDetailOrder(
+    @Path('idDonHang') String idDonHang,
+  );
 }
 //flutter pub run build_runner build

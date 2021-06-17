@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:manage_order/components/depency_injection/di.dart';
-import 'package:manage_order/data/models/local/order_request.dart';
-import 'package:manage_order/features/home/views/home_screen.dart';
-import 'package:manage_order/features/info_order/bloc/info_order_bloc.dart';
-import 'package:manage_order/features/info_order/views/info_order_screen.dart';
-import 'package:manage_order/features/login/bloc/login_bloc.dart';
-import 'package:manage_order/features/print_bill/views/printer_screen.dart';
-import 'package:manage_order/features/print_bill/views/test_printer_screen.dart';
 
+import '../components/depency_injection/di.dart';
+import '../data/models/local/order_request.dart';
+import '../data/models/remote/order_response.dart';
+import 'home/views/home_screen.dart';
+import 'info_order/bloc/info_order_bloc.dart';
+import 'info_order/views/info_order_screen.dart';
+import 'login/bloc/login_bloc.dart';
 import 'login/views/login_screen.dart';
+import 'print_bill/bloc/printer_bloc.dart';
+import 'print_bill/views/printer_screen.dart';
+import 'print_bill/views/test_printer_screen.dart';
+import 'stocker/views/stocker_screen.dart';
 
 class RouteList {
   static const String login = 'login';
@@ -19,6 +22,8 @@ class RouteList {
   static const String info_order = 'info_order';
   static const String printer = 'printer';
   static const String test_printer = 'test_printer';
+  static const String example_qr_scan = 'example_qr_scan';
+  static const String stocker = 'stocker';
 }
 
 class Routes {
@@ -41,12 +46,19 @@ class Routes {
         RouteList.printer: (context) {
           final arguments = settings.arguments as Map<String, dynamic>;
 
-          return PrinterScreen(
-            orderRequest: arguments['order_request'] as OrderRequest,
+          return BlocProvider(
+            create: (_) => injector.get<PrinterBloc>(),
+            child: PrinterScreen(
+              orderRequest: arguments['order_request'] as OrderRequest,
+              orderResponse: arguments['order_response'] as OrderResponse,
+            ),
           );
         },
         RouteList.test_printer: (context) {
           return TestPrinterScreen();
+        },
+        RouteList.stocker: (context) {
+          return const StockerScreen();
         },
       };
 

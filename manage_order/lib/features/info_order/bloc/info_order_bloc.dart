@@ -1,15 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:manage_order/data/models/local/item_stock.dart';
-import 'package:manage_order/data/models/local/order_request.dart';
-import 'package:manage_order/data/models/remote/order_response.dart';
-import 'package:manage_order/data/models/remote/truck_data.dart';
-import 'package:manage_order/data/models/remote/unit_data.dart';
-import 'package:manage_order/data/models/remote/warehouse_data.dart';
-import 'package:manage_order/features/info_order/interactor/info_order_interactor.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../data/models/local/item_stock.dart';
+import '../../../data/models/local/order_request.dart';
 import '../../../data/models/remote/fee_vehicle.dart';
+import '../../../data/models/remote/order_response.dart';
+import '../../../data/models/remote/truck_data.dart';
+import '../../../data/models/remote/unit_data.dart';
+import '../../../data/models/remote/warehouse_data.dart';
+import '../interactor/info_order_interactor.dart';
 
 part 'info_order_event.dart';
 part 'info_order_state.dart';
@@ -52,14 +52,28 @@ class InfoOrderBloc extends Bloc<InfoOrderEvent, InfoOrderState> {
       yield* _mapChangedListInfoStockEventToState(event, state);
     } else if (event is AddOrderSubmitEvent) {
       yield* _mapAddOrderSubmitEventToState(event, state);
+    } else if (event is ValidateInfoEvent) {
+      yield* _mapValidateInfoEventToState(event, state);
     }
+  }
+
+  Stream<InfoOrderState> _mapValidateInfoEventToState(
+    ValidateInfoEvent event,
+    InfoOrderState state,
+  ) async* {
+    final isValid = interactor.validateInfoOrder(event.request);
+    if (isValid == false) {
+      yield InvalidInfoState();
+      return;
+    }
+    yield ValidInfoState();
   }
 
   Stream<InfoOrderState> _mapAddOrderSubmitEventToState(
     AddOrderSubmitEvent event,
     InfoOrderState state,
   ) async* {
-    LoadingAddOrderState();
+    yield LoadingState();
     final response = await interactor.addOrder(
       event.request,
     );
@@ -113,6 +127,7 @@ class InfoOrderBloc extends Bloc<InfoOrderEvent, InfoOrderState> {
     GetListUnitsEvent event,
     InfoOrderState state,
   ) async* {
+    yield LoadingState();
     final response = await interactor.getListUnits();
     if (response != null && response.isEmpty == false) {
       yield GetListUnitsDoneState(response);
@@ -127,6 +142,8 @@ class InfoOrderBloc extends Bloc<InfoOrderEvent, InfoOrderState> {
     if (event.checked) {
       yield CheckWarehouseState(false);
       yield SelectWarehouseState(null);
+    } else {
+      yield SelectTruckState(null);
     }
   }
 
@@ -138,6 +155,8 @@ class InfoOrderBloc extends Bloc<InfoOrderEvent, InfoOrderState> {
     if (event.checked) {
       yield CheckTruckState(false);
       yield SelectTruckState(null);
+    } else {
+      yield SelectWarehouseState(null);
     }
   }
 
@@ -145,6 +164,7 @@ class InfoOrderBloc extends Bloc<InfoOrderEvent, InfoOrderState> {
     GetFeeVehiclesEvent event,
     InfoOrderState state,
   ) async* {
+    yield LoadingState();
     final response = await interactor.getFeeVehicles();
     if (response != null && response.isEmpty == false) {
       yield GetFeeVehiclesDoneState(response);

@@ -33,9 +33,12 @@ class InfoOrderRepository {
   Future<OrderResponse?> addOrder(OrderRequest request) async {
     final dataOrder = request.orderData();
     final response = await apiClient.addOrder(
-      idXeLon: request.idXelon != null ? request.idXelon.toString() : '',
+      idXeLon:
+          request.truck != null ? (request.truck?.idXe.toString() ?? '') : '',
       idNguoiDung: injector.get<AppPreferences>().getIdUser() ?? '',
-      idKho: request.idKho != null ? request.idKho.toString() : '',
+      idKho: request.warehouse != null
+          ? (request.warehouse?.idKho.toString() ?? '')
+          : '',
       idPhiXe:
           request.fee?.idPhiXe != null ? request.fee!.idPhiXe.toString() : '',
       soLuongXe: request.soLuongXe != null ? request.soLuongXe.toString() : '',

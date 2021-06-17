@@ -9,3 +9,8 @@ abstract class AppPreferences {
   static const String idUser = 'id_user';
   static const String roleUser = 'role_user';
 }
+
+class TypeUser {
+  static const baohang = 'baohang';
+  static const thukho = 'thukho';
+}
