@@ -1,5 +1,5 @@
 class ResultCommon {
-  String? ketQua;
+  int? ketQua;
 
   ResultCommon({this.ketQua});
 

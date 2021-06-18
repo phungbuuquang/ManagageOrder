@@ -57,6 +57,19 @@ class StockerGetInfoStockDoneState extends StockerState {
 
 class StockerLoadingState extends StockerState {
   @override
-  // TODO: implement props
+  List<Object?> get props => [const Uuid().v4()];
+}
+
+class StockerUpdateSmallTruckDoneState extends StockerState {
+  final bool isSuccess;
+  StockerUpdateSmallTruckDoneState(this.isSuccess);
+  @override
+  List<Object?> get props => [const Uuid().v4()];
+}
+
+class StockerCompleteTripDoneState extends StockerState {
+  final bool isSuccess;
+  StockerCompleteTripDoneState(this.isSuccess);
+  @override
   List<Object?> get props => [const Uuid().v4()];
 }

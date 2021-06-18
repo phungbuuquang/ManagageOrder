@@ -110,7 +110,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
             title: const Text('In giấy báo hàng'),
             actions: [
               IconButton(
-                icon: Icon(Icons.home),
+                icon: const Icon(Icons.home),
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     RouteList.home,

@@ -76,10 +76,11 @@ abstract class ApiClient {
     @Path('chuoiMaGoiHang') String chuoiMaGoiHang,
   );
 
-  @GET('${Apis.completeTrip}idXeLon={idXeLon}&machuyen={machuyen}')
+  @GET('${Apis.completeTrip}?idXeLon={idXeLon}&machuyen={machuyen}')
   Future<ResultCommon?> completeTrip(
     @Path('idXeLon') String idXeLon,
     @Path('machuyen') String machuyen,
   );
 }
 //flutter pub run build_runner build
+//build apk --release

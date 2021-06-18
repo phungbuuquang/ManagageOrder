@@ -25,3 +25,23 @@ class StockerGetInfoStockEvent extends StockerEvent {
   String code;
   StockerGetInfoStockEvent(this.code);
 }
+
+class StockerUpdateSmallTruckEvent extends StockerEvent {
+  String? idSmallTruck;
+  List<StockData>? listStock;
+
+  StockerUpdateSmallTruckEvent({
+    this.idSmallTruck,
+    this.listStock,
+  });
+}
+
+class StockerCompleteTripEvent extends StockerEvent {
+  String? idTruck;
+  String? idTrip;
+
+  StockerCompleteTripEvent({
+    this.idTruck,
+    this.idTrip,
+  });
+}

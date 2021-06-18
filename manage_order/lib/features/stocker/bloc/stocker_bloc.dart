@@ -32,7 +32,34 @@ class StockerBloc extends Bloc<StockerEvent, StockerState> {
       yield StockerSelectSmallTruckState(event.truck);
     } else if (event is StockerGetInfoStockEvent) {
       yield* _mapStockerGetInfoStockEventToState(event, state);
+    } else if (event is StockerUpdateSmallTruckEvent) {
+      yield* _mapStockerUpdateSmallTruckEventToState(event, state);
+    } else if (event is StockerCompleteTripEvent) {
+      yield* _mapStockerCompleteTripEventToState(event, state);
     }
+  }
+
+  Stream<StockerState> _mapStockerCompleteTripEventToState(
+    StockerCompleteTripEvent event,
+    StockerState state,
+  ) async* {
+    yield StockerLoadingState();
+    final response =
+        await interactor.completeTrip(event.idTruck ?? '', event.idTrip ?? '');
+    yield StockerCompleteTripDoneState(response);
+  }
+
+  Stream<StockerState> _mapStockerUpdateSmallTruckEventToState(
+    StockerUpdateSmallTruckEvent event,
+    StockerState state,
+  ) async* {
+    yield StockerLoadingState();
+    final response = await interactor.updateSmallTruck(
+      event.idSmallTruck ?? '',
+      event.listStock ?? [],
+    );
+
+    yield StockerUpdateSmallTruckDoneState(response);
   }
 
   Stream<StockerState> _mapStockerGetInfoStockEventToState(

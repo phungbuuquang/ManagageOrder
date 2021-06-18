@@ -25,4 +25,32 @@ class StockerInteractor {
   ) async {
     return repository.getInfoStock(maGoiHang);
   }
+
+  Future<bool> updateSmallTruck(
+    String idSmallTruck,
+    List<StockData> listStock,
+  ) async {
+    final response = await repository.updateSmallTruck(
+      idSmallTruck,
+      listStock,
+    );
+    if (response != null && response.ketQua == 1) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> completeTrip(
+    String idTruck,
+    String idTrip,
+  ) async {
+    final res = await repository.completeTrip(
+      idTruck,
+      idTrip,
+    );
+    if (res != null && res.ketQua == 1) {
+      return true;
+    }
+    return false;
+  }
 }

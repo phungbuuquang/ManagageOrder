@@ -217,7 +217,7 @@ class _ApiClient implements ApiClient {
         _setStreamType<ResultCommon>(
             Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
                 .compose(_dio.options,
-                    '/hoantatchuyenidXeLon=$idXeLon&machuyen=$machuyen',
+                    '/hoantatchuyen?idXeLon=$idXeLon&machuyen=$machuyen',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value =
