@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manage_order/features/stocker/bloc/stocker_bloc.dart';
 
 import '../components/depency_injection/di.dart';
 import '../data/models/local/order_request.dart';
@@ -13,6 +14,7 @@ import 'login/views/login_screen.dart';
 import 'print_bill/bloc/printer_bloc.dart';
 import 'print_bill/views/printer_screen.dart';
 import 'print_bill/views/test_printer_screen.dart';
+import 'stocker/views/scan_qr_screen.dart';
 import 'stocker/views/stocker_screen.dart';
 
 class RouteList {
@@ -22,7 +24,7 @@ class RouteList {
   static const String info_order = 'info_order';
   static const String printer = 'printer';
   static const String test_printer = 'test_printer';
-  static const String example_qr_scan = 'example_qr_scan';
+  static const String scan_qr = 'scan_qr';
   static const String stocker = 'stocker';
 }
 
@@ -58,7 +60,13 @@ class Routes {
           return TestPrinterScreen();
         },
         RouteList.stocker: (context) {
-          return const StockerScreen();
+          return BlocProvider(
+            create: (_) => injector.get<StockerBloc>(),
+            child: StockerScreen(),
+          );
+        },
+        RouteList.scan_qr: (context) {
+          return const ScanQRScreen();
         },
       };
 

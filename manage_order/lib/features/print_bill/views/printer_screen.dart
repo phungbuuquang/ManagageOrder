@@ -3,6 +3,7 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manage_order/features/routes.dart';
 
 import '../../../components/widgets/common_dialog_notification.dart';
 import '../../../components/widgets/my_dropdown_form_field.dart';
@@ -94,17 +95,6 @@ class _PrinterScreenState extends State<PrinterScreen> {
           break;
       }
     });
-
-    // if (!mounted) return;
-    // setState(() {
-    //   _devices = devices;
-    // });
-
-    // if (isConnected == true) {
-    //   setState(() {
-    //     _connected = true;
-    //   });
-    // }
   }
 
   _onPrintPressed() {
@@ -118,6 +108,17 @@ class _PrinterScreenState extends State<PrinterScreen> {
         Scaffold(
           appBar: AppBar(
             title: const Text('In giấy báo hàng'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.home),
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    RouteList.home,
+                    (Route<dynamic> route) => false,
+                  );
+                },
+              ),
+            ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(20.0),

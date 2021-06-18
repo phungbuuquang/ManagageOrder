@@ -1,12 +1,12 @@
-import 'package:manage_order/components/depency_injection/di.dart';
-import 'package:manage_order/data/models/local/order_request.dart';
-import 'package:manage_order/data/models/remote/fee_vehicle.dart';
-import 'package:manage_order/data/models/remote/order_response.dart';
-import 'package:manage_order/data/models/remote/truck_data.dart';
-import 'package:manage_order/data/models/remote/unit_data.dart';
-import 'package:manage_order/data/models/remote/warehouse_data.dart';
-import 'package:manage_order/services/API_request/api_client.dart';
-import 'package:manage_order/services/prefs/app_preferences.dart';
+import '../../../components/depency_injection/di.dart';
+import '../../../data/models/local/order_request.dart';
+import '../../../data/models/remote/fee_vehicle.dart';
+import '../../../data/models/remote/order_response.dart';
+import '../../../data/models/remote/truck_data.dart';
+import '../../../data/models/remote/unit_data.dart';
+import '../../../data/models/remote/warehouse_data.dart';
+import '../../../services/API_request/api_client.dart';
+import '../../../services/prefs/app_preferences.dart';
 
 class InfoOrderRepository {
   final ApiClient apiClient;

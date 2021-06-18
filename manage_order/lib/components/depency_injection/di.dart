@@ -6,6 +6,9 @@ import 'package:manage_order/features/info_order/repository/info_order_repositor
 import 'package:manage_order/features/print_bill/bloc/printer_bloc.dart';
 import 'package:manage_order/features/print_bill/interactor/printer_interactor.dart';
 import 'package:manage_order/features/print_bill/repository/printer_repository.dart';
+import 'package:manage_order/features/stocker/bloc/stocker_bloc.dart';
+import 'package:manage_order/features/stocker/interactor/stocker_interactor.dart';
+import 'package:manage_order/features/stocker/repository/stocker_repository.dart';
 import 'package:manage_order/services/prefs/app_preferences.dart';
 import 'package:manage_order/services/prefs/app_preferences_imple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,6 +65,15 @@ class DependencyInjection {
       () => PrinterBloc(
         interactor: PrinterInteractor(
           repository: PrinterRepository(
+            apiClient: _appApiClient,
+          ),
+        ),
+      ),
+    );
+    injector.registerFactory<StockerBloc>(
+      () => StockerBloc(
+        interactor: StockerInteractor(
+          repository: StockerRepository(
             apiClient: _appApiClient,
           ),
         ),

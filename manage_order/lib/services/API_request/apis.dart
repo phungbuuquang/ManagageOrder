@@ -7,4 +7,9 @@ class Apis {
   static const String loadUnit = '/loaddvt';
   static const String addOrder = '/themdonhang';
   static const String detailOrder = '/chitietdonhang';
+  static const String getTrip = '/getchuyen';
+  static const String loadSmallTruck = '/loadxenho';
+  static const String infoStock = '/getthongtingoihang';
+  static const String updateSmallTruck = '/capnhatxenho';
+  static const String completeTrip = '/hoantatchuyen';
 }

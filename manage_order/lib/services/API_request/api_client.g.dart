@@ -65,6 +65,23 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<List<TruckData>?> loadListSmallTrucks() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<TruckData>>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/loadxenho',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data
+        ?.map((dynamic i) => TruckData.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   Future<List<WarehouseData>?> loadListWarehouses() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -137,6 +154,74 @@ class _ApiClient implements ApiClient {
         ?.map(
             (dynamic i) => DetailOrderData.fromJson(i as Map<String, dynamic>))
         .toList();
+    return value;
+  }
+
+  @override
+  Future<TripData?> getTrip(idXeLon) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<TripData>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/getchuyen?idXeLon=$idXeLon',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : TripData.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<StockData?> getInfoStock(maGoiHang) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<StockData>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(
+                    _dio.options, '/getthongtingoihang?MaGoiHang=$maGoiHang',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : StockData.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ResultCommon?> updateSmallTruck(
+      idXeNho, idNguoiDung, chuoiMaGoiHang) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(_setStreamType<
+        ResultCommon>(Options(
+            method: 'POST', headers: <String, dynamic>{}, extra: _extra)
+        .compose(_dio.options,
+            '/capnhatxenho?idXeNho=$idXeNho&idNguoiDung=$idNguoiDung&chuoiMaGoiHang=$chuoiMaGoiHang',
+            queryParameters: queryParameters, data: _data)
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : ResultCommon.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ResultCommon?> completeTrip(idXeLon, machuyen) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ResultCommon>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options,
+                    '/hoantatchuyenidXeLon=$idXeLon&machuyen=$machuyen',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value =
+        _result.data == null ? null : ResultCommon.fromJson(_result.data!);
     return value;
   }
 
