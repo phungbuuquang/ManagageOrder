@@ -68,18 +68,18 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
             ),
           ],
         ),
-        _warehouseDropdownButton()
+        _buildListWarehouseView()
       ],
     );
   }
 
-  Future _showDialogInvalid(BuildContext context) {
+  Future _showDialogWarning(BuildContext context, String msg) {
     return showDialog(
       context: context,
       builder: (_context) => NotificationDialog(
         iconImages: const Icon(Icons.warning),
         title: 'Thông báo',
-        message: 'Vui lòng nhập đầy đủ thông tin',
+        message: msg,
         possitiveButtonName: 'OK',
         possitiveButtonOnClick: () {
           Navigator.of(_context).pop();
@@ -129,7 +129,10 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
             },
           );
         } else if (state is InvalidInfoState) {
-          _showDialogInvalid(context);
+          _showDialogWarning(
+            context,
+            'Vui lòng nhập đầy đủ thông tin',
+          );
         } else if (state is ValidInfoState) {
           _showDialogSubmitOrder(context);
         }
@@ -243,9 +246,16 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
               iconSize: 20,
               padding: const EdgeInsets.all(1),
               onPressed: () {
-                _bloc.add(
-                  DeleteInfoStockEvent(listStocks, index),
-                );
+                if (listStocks.length - 1 == 0) {
+                  _showDialogWarning(
+                    context,
+                    'Danh sách hàng không được trống',
+                  );
+                } else {
+                  _bloc.add(
+                    DeleteInfoStockEvent(listStocks, index),
+                  );
+                }
               },
             ),
           ],
@@ -264,19 +274,6 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
         const SizedBox(
           height: 5,
         ),
-        MyTextFormField(
-          height: 50,
-          labelText: 'Số lượng',
-          keyboardType: TextInputType.number,
-          // ignore: prefer_null_aware_operators
-          initialValue: item.number != null ? item.number.toString() : null,
-          onChange: (val) {
-            listStocks[index].number = int.parse(val);
-          },
-        ),
-        const SizedBox(
-          height: 5,
-        ),
         _buildSelectionUnit(
           context: context,
           onChanged: (val) {
@@ -286,6 +283,19 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
             );
           },
           unit: item.unit,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        MyTextFormField(
+          height: 50,
+          labelText: 'Số lượng',
+          keyboardType: TextInputType.number,
+          // ignore: prefer_null_aware_operators
+          initialValue: item.number != null ? item.number.toString() : null,
+          onChange: (val) {
+            listStocks[index].number = int.parse(val);
+          },
         ),
         const SizedBox(
           height: 5,
@@ -326,6 +336,47 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
               }
             },
           );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildListWarehouseView() {
+    return BlocConsumer<InfoOrderBloc, InfoOrderState>(
+      listener: (_, state) {
+        if (state is GetListWarehousesDoneState) {
+          listWarehouses = state.listWarehouses;
+        }
+        if (state is SelectWarehouseState) {
+          _warehouse = state.warehouse;
+        }
+      },
+      buildWhen: (prev, current) {
+        return current is SelectWarehouseState;
+      },
+      builder: (_, state) {
+        if (state is SelectWarehouseState) {
+          if (state.warehouse != null) {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: listWarehouses.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                final item = listWarehouses[index];
+                return MyRadioButton<WarehouseData>(
+                  value: item,
+                  groupValue: state.warehouse,
+                  title: item.tenKho,
+                  onChanged: (val) {
+                    if (val != null) {
+                      _bloc.add(SelectWarehouseEvent(val));
+                    }
+                  },
+                );
+              },
+            );
+          }
         }
         return const SizedBox.shrink();
       },
@@ -456,29 +507,28 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
           onChanged: onChanged,
         );
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                unit == null ? 'Chọn đơn vị tính' : (unit.tenDVT ?? ''),
-                style: unit == null
-                    ? AppTextTheme.getTextTheme.headline1
-                    : AppTextTheme.getTextTheme.subtitle2,
-              ),
-              const Icon(Icons.arrow_drop_down)
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            height: 2,
+      child: Container(
+        padding: const EdgeInsets.only(right: 10, left: 5),
+        height: 50,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
             color: Colors.grey,
           ),
-        ],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              unit == null ? 'Chọn đơn vị tính' : (unit.tenDVT ?? ''),
+              style: unit == null
+                  ? AppTextTheme.getTextTheme.headline1
+                  : AppTextTheme.getTextTheme.subtitle2,
+            ),
+            const Icon(Icons.arrow_drop_down)
+          ],
+        ),
       ),
     );
   }

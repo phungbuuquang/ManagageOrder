@@ -83,4 +83,4 @@ abstract class ApiClient {
   );
 }
 //flutter pub run build_runner build
-//build apk --release
+//flutter build apk --release

@@ -177,4 +177,102 @@ extension _StockerChildren on _StockerScreenState {
       },
     );
   }
+
+  Widget _buildScanBtn(BuildContext context) {
+    return GestureDetector(
+      onTap: scanPressed,
+      child: Center(
+        child: Container(
+          width: 80,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.orange,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: Text(
+              'Scan',
+              style: AppTextTheme.getTextTheme.subtitle1,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompleteTripBtn() {
+    return BlocListener<StockerBloc, StockerState>(
+      listener: (_, state) {
+        if (state is StockerCompleteTripDoneState) {
+          if (state.isSuccess) {
+            _showDialog('Hoàn thành chuyến thành công');
+          } else {
+            _showDialog('Hoàn thành chuyến thất bại');
+          }
+        }
+      },
+      child: GestureDetector(
+        onTap: () => _bloc.add(StockerCompleteTripEvent(
+          idTrip: trip?.maChuyen.toString(),
+          idTruck: truck?.idXe.toString(),
+        )),
+        child: Center(
+          child: Container(
+            // width: 80,
+            padding: const EdgeInsets.all(5),
+            height: 35,
+            decoration: BoxDecoration(
+                color: Colors.orange, borderRadius: BorderRadius.circular(5)),
+            child: Center(
+              child: Text(
+                'Hoàn thành chuyến',
+                style: AppTextTheme.getTextTheme.subtitle1,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDialog(String msg) {
+    return showDialog(
+        context: context,
+        builder: (ctx) {
+          return NotificationDialog(
+            iconImages: const Icon(Icons.warning),
+            title: 'Thông báo',
+            message: msg,
+            possitiveButtonName: 'OK',
+            possitiveButtonOnClick: () {
+              Navigator.of(ctx).pop();
+            },
+          );
+        });
+  }
+
+  Widget _buildSubmitBtn() {
+    return BlocListener<StockerBloc, StockerState>(
+      listener: (_, state) {
+        if (state is StockerUpdateSmallTruckDoneState) {
+          if (state.isSuccess) {
+            _showDialog('Cập nhật xe giao hàng thành công');
+          } else {
+            _showDialog('Cập nhật xe giao hàng thất bại');
+          }
+        }
+      },
+      child: MyButton(
+        title: 'Hoàn thành',
+        onPressed: () {
+          _bloc.add(
+            StockerUpdateSmallTruckEvent(
+              idSmallTruck: smallTruck?.idXe.toString(),
+              listStock: listStock,
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

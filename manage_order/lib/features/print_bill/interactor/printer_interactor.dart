@@ -19,10 +19,21 @@ class PrinterInteractor {
     }
 
     try {
-      await bluetooth.disconnect();
+      await disconnect(bluetooth);
       final bool isSuccess = await bluetooth.connect(device);
       return isSuccess;
     } on PlatformException catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> disconnect(BlueThermalPrinter bluetooth) async {
+    try {
+      bool isSuccess = await bluetooth.disconnect();
+      return isSuccess;
+    } on PlatformException catch (e) {
+      print(e);
       return false;
     }
   }

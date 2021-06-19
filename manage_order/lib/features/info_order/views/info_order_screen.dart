@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manage_order/components/widgets/my_radio_button.dart';
 
 import '../../../components/base/base_statefull.dart';
 import '../../../components/widgets/common_dialog_notification.dart';
@@ -81,9 +82,11 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      'Danh sách hàng hóa',
-                      style: AppTextTheme.getTextTheme.bodyText1,
+                    Center(
+                      child: Text(
+                        'Danh sách hàng hóa',
+                        style: AppTextTheme.getTextTheme.bodyText1,
+                      ),
                     ),
                     const SizedBox(
                       height: 5,
@@ -93,7 +96,7 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
                       height: 10,
                     ),
                     _buildCheckTruck(),
-                    _buildCheckWarehouse()
+                    _buildCheckWarehouse(),
                   ],
                 ),
                 const SizedBox(
