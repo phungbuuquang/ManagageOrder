@@ -42,9 +42,13 @@ extension _StockerChildren on _StockerScreenState {
       listener: (_, state) {
         if (state is StockerGetListSmallTruckDoneState) {
           listTrucks = state.listTrucks;
-        }
-        if (state is StockerSelectSmallTruckState) {
+        } else if (state is StockerSelectSmallTruckState) {
           smallTruck = state.truck;
+          _bloc.add(
+            StockerGetStocksOfSmallTruckEvent(
+              smallTruck?.idXe.toString() ?? '',
+            ),
+          );
         }
       },
       buildWhen: (prev, current) {
@@ -131,12 +135,29 @@ extension _StockerChildren on _StockerScreenState {
       listener: (_, state) {
         if (state is StockerGetInfoStockDoneState) {
           if (state.stock != null) {
-            listStock.add(state.stock!);
+            _showInfoStockDialog(state.stock!);
           }
+        }
+        if (state is StockerEditDoneState) {
+          _bloc.add(
+            StockerUpdateSmallTruckEvent(
+              stock: state.stock,
+              idSmallTruck: smallTruck?.idXe.toString(),
+            ),
+          );
+        }
+        if (state is StockerUpdateSmallTruckDoneState) {
+          if (state.stockData != null) {
+            listStock.add(state.stockData!);
+          }
+        }
+        if (state is StockerGetStocksOfSmallTruckDoneState) {
+          listStock = state.listStock;
         }
       },
       buildWhen: (prev, current) {
-        return current is StockerGetInfoStockDoneState;
+        return current is StockerUpdateSmallTruckDoneState ||
+            current is StockerGetStocksOfSmallTruckDoneState;
       },
       builder: (_, state) {
         return ListView.builder(
@@ -160,6 +181,22 @@ extension _StockerChildren on _StockerScreenState {
                   ),
                   Text(
                     'SL: ${item.soLuong} ${item.dVT}',
+                    style: AppTextTheme.getTextTheme.subtitle2,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'Đơn giá: ${Utils.formatCurrency(
+                      item.donGia ?? 0,
+                    )}',
+                    style: AppTextTheme.getTextTheme.subtitle2,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'Ghi chú: ${item.ghiChu}',
                     style: AppTextTheme.getTextTheme.subtitle2,
                   ),
                   const SizedBox(
@@ -251,28 +288,21 @@ extension _StockerChildren on _StockerScreenState {
         });
   }
 
-  Widget _buildSubmitBtn() {
-    return BlocListener<StockerBloc, StockerState>(
-      listener: (_, state) {
-        if (state is StockerUpdateSmallTruckDoneState) {
-          if (state.isSuccess) {
-            _showDialog('Cập nhật xe giao hàng thành công');
-          } else {
-            _showDialog('Cập nhật xe giao hàng thất bại');
-          }
-        }
-      },
-      child: MyButton(
-        title: 'Hoàn thành',
-        onPressed: () {
-          _bloc.add(
-            StockerUpdateSmallTruckEvent(
-              idSmallTruck: smallTruck?.idXe.toString(),
-              listStock: listStock,
-            ),
-          );
-        },
-      ),
-    );
-  }
+  // Widget _buildSubmitBtn() {
+  //   return BlocListener<StockerBloc, StockerState>(
+  //     listener: (_, state) {
+  //       if (state is StockerUpdateSmallTruckDoneState) {
+  //         if (state.isSuccess) {
+  //           _showDialog('Cập nhật xe giao hàng thành công');
+  //         } else {
+  //           _showDialog('Cập nhật xe giao hàng thất bại');
+  //         }
+  //       }
+  //     },
+  //     child: MyButton(
+  //       title: 'Hoàn thành',
+  //       onPressed: () {},
+  //     ),
+  //   );
+  // }
 }

@@ -8,6 +8,7 @@ import 'package:universal_platform/universal_platform.dart';
 
 import 'components/depency_injection/di.dart';
 import 'features/app.dart';
+import 'styles/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,7 @@ void main() {
     await DependencyInjection.inject();
     if (UniversalPlatform.isIOS || UniversalPlatform.isAndroid) {
       unawaited(FlutterStatusbarcolor.setStatusBarWhiteForeground(true));
-      unawaited(FlutterStatusbarcolor.setStatusBarColor(Colors.transparent));
+      unawaited(FlutterStatusbarcolor.setStatusBarColor(AppThemeColor.primary));
       unawaited(SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp]));
     }

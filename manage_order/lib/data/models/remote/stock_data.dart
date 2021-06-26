@@ -4,6 +4,7 @@ class StockData {
   int? soLuong;
   int? donGia;
   String? maGoiHang;
+  String? ghiChu;
 
   StockData({
     this.tenHang,
@@ -17,6 +18,8 @@ class StockData {
     dVT = json['DVT'];
     soLuong = json['SoLuong'];
     maGoiHang = json['MaGoiHang'];
+    ghiChu = json['GhiChu'];
+    donGia = json['DonGia'];
   }
 
   Map<String, dynamic> toJson() {
@@ -25,6 +28,7 @@ class StockData {
     data['DVT'] = dVT;
     data['SoLuong'] = soLuong;
     data['DonGia'] = donGia;
+
     return data;
   }
 }

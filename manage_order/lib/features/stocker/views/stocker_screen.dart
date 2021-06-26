@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manage_order/components/widgets/common_dialog_notification.dart';
+import 'package:manage_order/features/stocker/views/info_stock_dialog.dart';
+import 'package:manage_order/utils/utils.dart';
 import 'package:scan/scan.dart';
 
 import '../../../components/widgets/my_button.dart';
@@ -77,7 +79,7 @@ class _StockerScreenState extends State<StockerScreen> {
                   ],
                 ),
               ),
-              _buildSubmitBtn()
+              // _buildSubmitBtn()
             ],
           ),
         ),
@@ -96,6 +98,23 @@ class _StockerScreenState extends State<StockerScreen> {
         },
       )
     ]);
+  }
+
+  Future<void> _showInfoStockDialog(
+    StockData stock,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (ctx) {
+        return InfoStockDialog(
+          stock: stock,
+        );
+      },
+    ).then((value) {
+      if (value != null) {
+        _bloc.add(StockerEditDoneEvent(value));
+      }
+    });
   }
 
   Future<void> scanPressed() async {

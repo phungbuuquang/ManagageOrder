@@ -36,7 +36,20 @@ class StockerBloc extends Bloc<StockerEvent, StockerState> {
       yield* _mapStockerUpdateSmallTruckEventToState(event, state);
     } else if (event is StockerCompleteTripEvent) {
       yield* _mapStockerCompleteTripEventToState(event, state);
+    } else if (event is StockerEditDoneEvent) {
+      yield StockerEditDoneState(event.stock);
+    } else if (event is StockerGetStocksOfSmallTruckEvent) {
+      yield* _mapStockerGetStocksOfSmallTruckEventToState(event, state);
     }
+  }
+
+  Stream<StockerState> _mapStockerGetStocksOfSmallTruckEventToState(
+    StockerGetStocksOfSmallTruckEvent event,
+    StockerState state,
+  ) async* {
+    yield StockerLoadingState();
+    final response = await interactor.getStockOfSmallTruck(event.idTruck);
+    yield StockerGetStocksOfSmallTruckDoneState(response ?? []);
   }
 
   Stream<StockerState> _mapStockerCompleteTripEventToState(
@@ -54,12 +67,11 @@ class StockerBloc extends Bloc<StockerEvent, StockerState> {
     StockerState state,
   ) async* {
     yield StockerLoadingState();
-    final response = await interactor.updateSmallTruck(
-      event.idSmallTruck ?? '',
-      event.listStock ?? [],
+    final response = await interactor.updateSmallTruckSingleStock(
+      idSmallTruck: event.idSmallTruck ?? '',
+      stock: event.stock,
     );
-
-    yield StockerUpdateSmallTruckDoneState(response);
+    yield StockerUpdateSmallTruckDoneState(response ? event.stock : null);
   }
 
   Stream<StockerState> _mapStockerGetInfoStockEventToState(
@@ -72,7 +84,7 @@ class StockerBloc extends Bloc<StockerEvent, StockerState> {
       yield StockerGetInfoStockDoneState(response);
       return;
     }
-    yield StockerSelectSmallTruckState(null);
+    yield StockerGetInfoStockDoneState(null);
   }
 
   Stream<StockerState> _mapGetListSmallTruckEventToState(

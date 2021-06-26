@@ -31,6 +31,9 @@ abstract class ApiClient {
   @GET(Apis.loadTruck)
   Future<List<TruckData>?> loadListTrucks();
 
+  @GET(Apis.loadFreeTruck)
+  Future<List<TruckData>?> loadListFreeTruck();
+
   @GET(Apis.loadSmallTruck)
   Future<List<TruckData>?> loadListSmallTrucks();
 
@@ -80,6 +83,10 @@ abstract class ApiClient {
   Future<ResultCommon?> completeTrip(
     @Path('idXeLon') String idXeLon,
     @Path('machuyen') String machuyen,
+  );
+  @GET('${Apis.stockOfSmallTruck}?idXeNho={idXeNho}')
+  Future<List<StockData>?> getStockOfSmallTruck(
+    @Path('idXeNho') String idXeNho,
   );
 }
 //flutter pub run build_runner build

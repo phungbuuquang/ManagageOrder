@@ -35,8 +35,23 @@ class StockerRepository {
   ) async {
     var stockCodes = '';
     listStock.forEach((element) {
-      stockCodes += '${element.maGoiHang ?? ''},';
+      stockCodes +=
+          '${element.maGoiHang ?? ''}|${element.donGia}|${element.ghiChu},';
     });
+    return apiClient.updateSmallTruck(
+      idSmallTruck,
+      injector.get<AppPreferences>().getIdUser() ?? '',
+      stockCodes,
+    );
+  }
+
+  Future<ResultCommon?> updateSmallTruckSingleStock({
+    required String idSmallTruck,
+    required StockData stock,
+  }) async {
+    final stockCodes =
+        '${stock.maGoiHang ?? ''}|${stock.donGia}|${stock.ghiChu},';
+
     return apiClient.updateSmallTruck(
       idSmallTruck,
       injector.get<AppPreferences>().getIdUser() ?? '',
@@ -52,5 +67,12 @@ class StockerRepository {
       idTruck,
       idTrip,
     );
+  }
+
+  Future<List<StockData>?> getStockOfSmallTruck(
+    String idTruck,
+  ) async {
+    final response = await apiClient.getStockOfSmallTruck(idTruck);
+    return response;
   }
 }

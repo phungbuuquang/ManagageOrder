@@ -61,8 +61,8 @@ class StockerLoadingState extends StockerState {
 }
 
 class StockerUpdateSmallTruckDoneState extends StockerState {
-  final bool isSuccess;
-  StockerUpdateSmallTruckDoneState(this.isSuccess);
+  final StockData? stockData;
+  StockerUpdateSmallTruckDoneState(this.stockData);
   @override
   List<Object?> get props => [const Uuid().v4()];
 }
@@ -70,6 +70,22 @@ class StockerUpdateSmallTruckDoneState extends StockerState {
 class StockerCompleteTripDoneState extends StockerState {
   final bool isSuccess;
   StockerCompleteTripDoneState(this.isSuccess);
+  @override
+  List<Object?> get props => [const Uuid().v4()];
+}
+
+class StockerEditDoneState extends StockerState {
+  final StockData stock;
+  StockerEditDoneState(this.stock);
+
+  @override
+  List<Object?> get props => [const Uuid().v4()];
+}
+
+class StockerGetStocksOfSmallTruckDoneState extends StockerState {
+  final List<StockData> listStock;
+  StockerGetStocksOfSmallTruckDoneState(this.listStock);
+
   @override
   List<Object?> get props => [const Uuid().v4()];
 }

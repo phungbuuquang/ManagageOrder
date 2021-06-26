@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:manage_order/components/widgets/common_dialog_notification.dart';
-import 'package:manage_order/features/routes.dart';
 
 import '../../../components/base/base_statefull.dart';
+import '../../../components/widgets/common_dialog_notification.dart';
 import '../../../components/widgets/my_button.dart';
 import '../../../components/widgets/my_text_form_field.dart';
 import '../../../styles/theme.dart';
+import '../../routes.dart';
 import '../bloc/login_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -76,7 +76,7 @@ class _LoginScreenState extends StatefulWidgetBase<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        'XEP',
+                        'HongNam',
                         style: AppTextTheme.getLogoTextTheme.bodyText1,
                       ),
                       Column(

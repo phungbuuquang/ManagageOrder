@@ -65,6 +65,23 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<List<TruckData>?> loadListFreeTruck() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<TruckData>>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/loadxelondangranh',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data
+        ?.map((dynamic i) => TruckData.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   Future<List<TruckData>?> loadListSmallTrucks() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -222,6 +239,23 @@ class _ApiClient implements ApiClient {
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value =
         _result.data == null ? null : ResultCommon.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<List<StockData>?> getStockOfSmallTruck(idXeNho) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<StockData>>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/hangxenho?idXeNho=$idXeNho',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data
+        ?.map((dynamic i) => StockData.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 

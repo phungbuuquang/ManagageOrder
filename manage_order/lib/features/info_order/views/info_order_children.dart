@@ -32,7 +32,7 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
             ),
           ],
         ),
-        _truckDropdownButton()
+        _buildListFreeTruckView()
       ],
     );
   }
@@ -324,7 +324,9 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
                 .map((e) => DropdownMenuItem<FeeVehicle>(
                       value: e,
                       child: Text(
-                        '${e.tenPhi ?? ''} (${'${e.gia}'})',
+                        '${e.tenPhi ?? ''} (${'${Utils.formatCurrency(
+                          e.gia ?? 0,
+                        )}'})',
                       ),
                     ))
                 .toList(),
@@ -336,6 +338,47 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
               }
             },
           );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildListFreeTruckView() {
+    return BlocConsumer<InfoOrderBloc, InfoOrderState>(
+      listener: (_, state) {
+        if (state is GetListTrucksDoneState) {
+          listTrucks = state.listTrucks;
+        }
+        if (state is SelectTruckState) {
+          _truck = state.truck;
+        }
+      },
+      buildWhen: (prev, current) {
+        return current is SelectTruckState;
+      },
+      builder: (_, state) {
+        if (state is SelectTruckState) {
+          if (state.truck != null) {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: listTrucks.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                final item = listTrucks[index];
+                return MyRadioButton<TruckData>(
+                  value: item,
+                  groupValue: state.truck,
+                  title: item.bienSoXe,
+                  onChanged: (val) {
+                    if (val != null) {
+                      _bloc.add(SelectTruckEvent(val));
+                    }
+                  },
+                );
+              },
+            );
+          }
         }
         return const SizedBox.shrink();
       },
@@ -476,6 +519,7 @@ extension _InfoOrderChildren on _InfoOrderScreenState {
         MyTextFormField(
           height: 50,
           labelText: 'Số lượng xe',
+          initialValue: 1.toString(),
           onChange: (val) {
             _numVehicle = int.parse(val);
           },

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manage_order/components/widgets/my_radio_button.dart';
+import 'package:manage_order/utils/utils.dart';
 
 import '../../../components/base/base_statefull.dart';
 import '../../../components/widgets/common_dialog_notification.dart';
@@ -35,7 +36,7 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
   List<UnitData> listUnits = [];
   List<ItemStock> listStocks = [];
   FeeVehicle? _fee;
-  int? _numVehicle;
+  int _numVehicle = 1;
   String? _nameCustomer;
   TruckData? _truck;
   WarehouseData? _warehouse;
@@ -96,6 +97,9 @@ class _InfoOrderScreenState extends StatefulWidgetBase<InfoOrderScreen> {
                       height: 10,
                     ),
                     _buildCheckTruck(),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     _buildCheckWarehouse(),
                   ],
                 ),

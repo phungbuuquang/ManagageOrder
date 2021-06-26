@@ -80,7 +80,7 @@ extension _PrinterChildren on _PrinterScreenState {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'In mã QR',
+                  'In phiếu thông tin',
                   style: AppTextTheme.getTextTheme.bodyText1,
                 ),
                 Icon(
@@ -195,7 +195,7 @@ extension _PrinterChildren on _PrinterScreenState {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'In biên nhận',
+                  'In phiếu báo hàng',
                   style: AppTextTheme.getTextTheme.bodyText1,
                 ),
                 Icon(

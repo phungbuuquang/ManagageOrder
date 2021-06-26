@@ -19,7 +19,7 @@ class InfoOrderRepository {
   }
 
   Future<List<TruckData>?> getListTrucks() async {
-    return apiClient.loadListTrucks();
+    return apiClient.loadListFreeTruck();
   }
 
   Future<List<WarehouseData>?> getListWarehouses() async {

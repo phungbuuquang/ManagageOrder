@@ -53,4 +53,24 @@ class StockerInteractor {
     }
     return false;
   }
+
+  Future<bool> updateSmallTruckSingleStock({
+    required String idSmallTruck,
+    required StockData stock,
+  }) async {
+    final res = await repository.updateSmallTruckSingleStock(
+      idSmallTruck: idSmallTruck,
+      stock: stock,
+    );
+    if (res != null && res.ketQua == 1) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<StockData>?> getStockOfSmallTruck(
+    String idTruck,
+  ) async {
+    return repository.getStockOfSmallTruck(idTruck);
+  }
 }
